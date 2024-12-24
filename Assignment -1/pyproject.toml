@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "poetry add fastapi pymongo passlib python-dotenv pydantic uvicorn"
+version = "0.1.0"
+description = ""
+authors = ["sjsoumil <jsoumil0326@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pyjwt = "^2.10.1"
+passlib = "^1.7.4"
+python-multipart = "^0.0.20"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
