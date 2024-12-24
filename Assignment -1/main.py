@@ -76,7 +76,29 @@ async def login(username: str = Form(...), password: str = Form(...)):
     if not user or not verify_password(password, user["password_hash"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     token = create_access_token(data={"sub": str(user["_id"])})
+
     return {"access_token": token, "token_type": "bearer"}
+
+@app.post("/users/", response_model=User)
+async def create_user(username: str = Form(...), email: str = Form(...), password: str = Form(...)):
+    # Check if the user already exists
+    existing_user = users_collection.find_one({"username": username})
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Username already taken")
+
+    # Hash the password
+    hashed_password = pwd_context.hash(password)
+
+    # Create new user
+    user_data = {
+        "username": username,
+        "email": email,
+        "password_hash": hashed_password,
+    }
+    result = users_collection.insert_one(user_data)
+    user = users_collection.find_one({"_id": result.inserted_id})
+
+    return User(username=user["username"], email=user["email"], password_hash=user["password_hash"])
 
 @app.post("/events/", response_model=Event)
 async def create_event(event: Event, token: str = Depends(oauth2_scheme)):
